@@ -1,0 +1,51 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.pagesjaunes</groupId>
+	<artifactId>xml2json</artifactId>
+	<version>1.0.0</version>
+	<name>xm2json</name>
+	<description>Convert XML to JSON</description>
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<scm>
+		<connection>scm:git:git@github.com:pagesjaunes/xml2json.git</connection>
+		<developerConnection>scm:git:git@github.com:pagesjaunes/xml2json.git</developerConnection>
+		<url>http://github.com/pagesjaunes/xml2json</url>
+	</scm>
+	<build>
+		<plugins>
+		</plugins>
+	</build>
+	<organization>
+		<name>pagesjaunes.fr</name>
+	</organization>
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.17</version>
+			<scope>compile</scope>
+			<optional>true</optional>
+		</dependency>
+	</dependencies>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>4.11</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+	<url>http://github.com/pagesjaunes/xml2json</url>
+</project>
