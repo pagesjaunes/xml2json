@@ -80,7 +80,7 @@ public class XMLtoJSONTest {
                 + "</bloc>";
         Assert.assertEquals("{"
                 + "\"blocid\":\"00413695C0001\","
-                + "\"test_liste\":{\"class\":\"array\",\"obj\":[\"test liste 1\",\"test liste 2\"]}}",
+                + "\"test_liste\":{\"@class\":\"array\",\"obj\":[\"test liste 1\",\"test liste 2\"]}}",
                 stXmlToJson.toJSONObject(xml).toString());
 
         xml = "<bloc>"
@@ -91,7 +91,7 @@ public class XMLtoJSONTest {
                 + "</bloc>";
         Assert.assertEquals("{"
                 + "\"blocid\":\"00413695C0002\","
-                + "\"test_liste\":{\"class\":\"array\",\"obj\":\"test liste 1\"}}",
+                + "\"test_liste\":{\"@class\":\"array\",\"obj\":\"test liste 1\"}}",
                 stXmlToJson.toJSONObject(xml).toString());
 
         xml = "<bloc>"
@@ -103,7 +103,7 @@ public class XMLtoJSONTest {
                 + "</bloc>";
         Assert.assertEquals("{"
                 + "\"blocid\":\"00413695C0003\","
-                + "\"test_liste\":{\"class\":\"array\",\"obj\":\"test liste 1\",\"obj2\":\"test liste 2\"}}",
+                + "\"test_liste\":{\"@class\":\"array\",\"obj\":\"test liste 1\",\"obj2\":\"test liste 2\"}}",
                 stXmlToJson.toJSONObject(xml).toString());
     }
 
@@ -263,8 +263,8 @@ public class XMLtoJSONTest {
         Assert.assertEquals("{"
                 + "\"blocid\":\"00413695C0003\","
                 + "\"test_liste\":{\"test_liste\":["
-                + "{\"type\":\"1\",\"test_liste\":[\"test liste 1\",\"test liste 2\"]},"
-                + "{\"type\":\"2\",\"test_liste\":[\"test liste 3\",\"test liste 4\"]}]}}",
+                + "{\"@type\":\"1\",\"test_liste\":[\"test liste 1\",\"test liste 2\"]},"
+                + "{\"@type\":\"2\",\"test_liste\":[\"test liste 3\",\"test liste 4\"]}]}}",
                 stXmlToJson.toJSONObject(xml).toString());
 
         xml = "<bloc>"
@@ -281,8 +281,8 @@ public class XMLtoJSONTest {
         Assert.assertEquals("{"
                 + "\"blocid\":\"00413695C0003\","
                 + "\"test_liste\":{\"test_liste\":["
-                + "{\"type\":\"1\",\"test_liste\":[\"test liste 1\"]},"
-                + "{\"type\":\"2\",\"test_liste\":[\"test liste 2\"]}]}}",
+                + "{\"@type\":\"1\",\"test_liste\":[\"test liste 1\"]},"
+                + "{\"@type\":\"2\",\"test_liste\":[\"test liste 2\"]}]}}",
                 stXmlToJson.toJSONObject(xml).toString());
     }
 
@@ -296,7 +296,7 @@ public class XMLtoJSONTest {
                 + "</bloc>";
         Assert.assertEquals("{"
                 + "\"blocid\":\"00413695C0001\","
-                + "\"test_attribute\":{\"attr1\":\"attribute 1\",\"attr2\":\"attribute 2\"}}",
+                + "\"test_attribute\":{\"@attr1\":\"attribute 1\",\"@attr2\":\"attribute 2\"}}",
                 stXmlToJson.toJSONObject(xml).toString());
     }
 
@@ -311,9 +311,9 @@ public class XMLtoJSONTest {
         Assert.assertEquals("{"
                 + "\"blocid\":\"00413695C0001\","
                 + "\"test_attribute\":{"
-                + "\"attr1\":\"attribute 1\","
-                + "\"attr2\":\"attribute 2\","
-                + "\"content\":\"contenu text\"}}",
+                + "\"@attr1\":\"attribute 1\","
+                + "\"@attr2\":\"attribute 2\","
+                + "\"$content\":\"contenu text\"}}",
                 stXmlToJson.toJSONObject(xml).toString());
     }
 
@@ -328,7 +328,7 @@ public class XMLtoJSONTest {
                 + "</bloc>";
         Assert.assertEquals("{"
                 + "\"blocid\":\"00413695C0001\","
-                + "\"test_mixte\":{\"content\":\"contenu texte\",\"mixte\":\"test\"}}",
+                + "\"test_mixte\":{\"$content\":\"contenu texte\",\"mixte\":\"test\"}}",
                 stXmlToJson.toJSONObject(xml).toString());
     }
 
@@ -340,7 +340,7 @@ public class XMLtoJSONTest {
                 + "</bloc_cdata>";
         Assert.assertEquals("{"
                 + "\"blocid\":\"<xml_test><toto test=\\\"ok\\\">cdata<\\/toto><\\/xml_test>\","
-                + "\"blocid2\":{\"xml_test\":{\"toto\":{\"test\":\"ok\",\"content\":\"cdata\"}}}}",
+                + "\"blocid2\":{\"xml_test\":{\"toto\":{\"@test\":\"ok\",\"$content\":\"cdata\"}}}}",
                 stXmlToJson.toJSONObject(xml).toString());
     }
 
@@ -353,10 +353,10 @@ public class XMLtoJSONTest {
                 + "<blocid4 attr_bool=\"1\" attr2_bool=\"true\">true</blocid4>"
                 + "</bloc_boolean>";
         Assert.assertEquals("{"
-                + "\"blocid\":{\"attr_bool\":true,\"attr2_bool\":true,\"content\":true},"
-                + "\"blocid2\":{\"attr_bool\":false,\"attr2_bool\":false,\"content\":false},"
-                + "\"blocid3\":{\"attr_bool\":false,\"attr2_bool\":false,\"content\":false},"
-                + "\"blocid4\":{\"attr_bool\":\"1\",\"attr2_bool\":\"true\",\"content\":\"true\"}}",
+                + "\"blocid\":{\"@attr_bool\":true,\"@attr2_bool\":true,\"$content\":true},"
+                + "\"blocid2\":{\"@attr_bool\":false,\"@attr2_bool\":false,\"$content\":false},"
+                + "\"blocid3\":{\"@attr_bool\":false,\"@attr2_bool\":false,\"$content\":false},"
+                + "\"blocid4\":{\"@attr_bool\":\"1\",\"@attr2_bool\":\"true\",\"$content\":\"true\"}}",
                 stXmlToJson.toJSONObject(xml).toString());
 
         xml = "<bloc_number>"
@@ -366,10 +366,10 @@ public class XMLtoJSONTest {
                 + "<blocid4 attr_number=\"004136950001.1515454354654\" attr2_number=\"-004136950001.1515454354654\">004136950001.1515454354654</blocid4>"
                 + "</bloc_number>";
         Assert.assertEquals("{"
-                + "\"blocid\":{\"attr_number\":4136950001,\"attr2_number\":-4136950001,\"content\":4136950001},"
-                + "\"blocid2\":{\"attr_number\":4136950001.1515454354654,\"attr2_number\":-4136950001.1515454354654,\"content\":4136950001.1515454354654},"
-                + "\"blocid3\":{\"attr_number\":\"004136950001\",\"attr2_number\":\"-004136950001\",\"content\":\"004136950001\"},"
-                + "\"blocid4\":{\"attr_number\":\"004136950001.1515454354654\",\"attr2_number\":\"-004136950001.1515454354654\",\"content\":\"004136950001.1515454354654\"}}",
+                + "\"blocid\":{\"@attr_number\":4136950001,\"@attr2_number\":-4136950001,\"$content\":4136950001},"
+                + "\"blocid2\":{\"@attr_number\":4136950001.1515454354654,\"@attr2_number\":-4136950001.1515454354654,\"$content\":4136950001.1515454354654},"
+                + "\"blocid3\":{\"@attr_number\":\"004136950001\",\"@attr2_number\":\"-004136950001\",\"$content\":\"004136950001\"},"
+                + "\"blocid4\":{\"@attr_number\":\"004136950001.1515454354654\",\"@attr2_number\":\"-004136950001.1515454354654\",\"$content\":\"004136950001.1515454354654\"}}",
                 stXmlToJson.toJSONObject(xml).toString());
 
         xml = "<bloc_date>"
@@ -377,8 +377,8 @@ public class XMLtoJSONTest {
                 + "<blocid2 attr_date=\"2011-08-26 00:10:05\" attr2_date=\"2011-08-26 00:10:05.012\">2011-08-26</blocid2>"
                 + "</bloc_date>";
         Assert.assertEquals("{"
-                + "\"blocid\":{\"attr_date\":{\"$date\":\"2011-08-26T00:10:05.000Z\"},\"attr2_date\":{\"$date\":\"2011-08-26T00:10:05.012Z\"},\"content\":{\"$date\":\"2011-08-26T00:00:00.000Z\"}},"
-                + "\"blocid2\":{\"attr_date\":\"2011-08-26 00:10:05\",\"attr2_date\":\"2011-08-26 00:10:05.012\",\"content\":\"2011-08-26\"}}",
+                + "\"blocid\":{\"@attr_date\":{\"$date\":\"2011-08-26T00:10:05.000Z\"},\"@attr2_date\":{\"$date\":\"2011-08-26T00:10:05.012Z\"},\"$content\":{\"$date\":\"2011-08-26T00:00:00.000Z\"}},"
+                + "\"blocid2\":{\"@attr_date\":\"2011-08-26 00:10:05\",\"@attr2_date\":\"2011-08-26 00:10:05.012\",\"$content\":\"2011-08-26\"}}",
                 stXmlToJson.toJSONObject(xml).toString());
 
         xml = "<bloc_boolean2>"
@@ -386,8 +386,8 @@ public class XMLtoJSONTest {
                 + "<blocid2 attr_bool=\"1\" attr2_bool=\"false\">false</blocid2>"
                 + "</bloc_boolean2>";
         Assert.assertEquals("{"
-                + "\"blocid\":{\"attr\":\"1\",\"attr2_bool\":\"true\"},"
-                + "\"blocid2\":{\"attr_bool\":true,\"attr2_bool\":false,\"content\":false}}",
+                + "\"blocid\":{\"@attr\":\"1\",\"@attr2_bool\":\"true\"},"
+                + "\"blocid2\":{\"@attr_bool\":true,\"@attr2_bool\":false,\"$content\":false}}",
                 stXmlToJson.toJSONObject(xml).toString());
     }
 

@@ -32,6 +32,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import com.pagesjaunes.json.JSONArray;
 import com.pagesjaunes.json.JSONException;
 import com.pagesjaunes.json.JSONObject;
 import com.pagesjaunes.json.XMLTokener;
@@ -41,13 +42,10 @@ import com.pagesjaunes.json.config.Types;
 /**
  * Use JSON.org class.
  * 
- * Convert a well-formed (but not necessarily valid) XML string into a
- * JSONObject. Some information may be lost in this transformation because JSON
- * is a data format and XML is a document format. XML uses elements, attributes,
- * and content text, while JSON uses unordered collections of name/value pairs
- * and arrays of values. JSON does not does not like to distinguish between
- * elements and attributes. Sequences of similar elements are represented as
- * JSONArrays. Content text may be placed in a "content" member. Comments,
+ * Converts a well-formed (but not necessarily valid) XML string into a
+ * {@link JSONObject}. Attributes names are prefixed with "@" in order to
+ * distinguish from elements. Content sections are identified by "$content".
+ * Sequences of elements are combined into {@link JSONArray}s. Comments,
  * prologs, DTDs, and <code>&lt;[ [ ]]></code> are ignored.
  * 
  * @param string
@@ -144,7 +142,7 @@ public class XmlToJsonService {
 					if (x.next() == '[') {
 						string = x.nextCDATA();
 						if (string.length() > 0) {
-							context.accumulate("content", string, false);
+							context.accumulate("$content", string, false);
 						}
 						return false;
 					}
@@ -213,7 +211,7 @@ public class XmlToJsonService {
 				// attribute = value
 
 				if (token instanceof String) {
-					string = (String) token;
+					string = "@" + token;
 					addQueue(queue, string);
 					token = x.nextToken();
 					if (token == EQ) {
@@ -258,10 +256,10 @@ public class XmlToJsonService {
 							return false;
 						} else if (token instanceof String) {
 							string = (String) token;
-							addQueue(queue, "content");
+							addQueue(queue, "$content");
 							if (string.length() > 0) {
 								jsonobject.accumulate(
-										"content",
+										"$content",
 										stringToValue(tagName, string,
 												queue.getLast()), false);
 							}
@@ -276,9 +274,9 @@ public class XmlToJsonService {
 									// flux JSON
 									// context.accumulate(tagName, "");
 								} else if (jsonobject.length() == 1
-										&& jsonobject.opt("content") != null) {
+										&& jsonobject.opt("$content") != null) {
 									context.accumulate(tagName,
-											jsonobject.opt("content"), isArray);
+											jsonobject.opt("$content"), isArray);
 								} else {
 									context.accumulate(tagName, jsonobject,
 											isArray);
