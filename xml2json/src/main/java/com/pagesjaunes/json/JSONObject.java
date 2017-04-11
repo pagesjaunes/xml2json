@@ -496,7 +496,7 @@ public class JSONObject {
                     ? ((Number) object).doubleValue()
                     : Double.parseDouble((String) object);
         } catch (Exception e) {
-            throw new JSONException("JSONObject[" + quote(key) + "] is not a number.");
+            throw new JSONException("JSONObject[" + quote(key) + "] is not a number.", e);
         }
     }
 
@@ -515,7 +515,7 @@ public class JSONObject {
                     ? ((Number) object).intValue()
                     : Integer.parseInt((String) object);
         } catch (Exception e) {
-            throw new JSONException("JSONObject[" + quote(key) + "] is not an int.");
+            throw new JSONException("JSONObject[" + quote(key) + "] is not an int.", e);
         }
     }
 
@@ -566,7 +566,7 @@ public class JSONObject {
                     ? ((Number) object).longValue()
                     : Long.parseLong((String) object);
         } catch (Exception e) {
-            throw new JSONException("JSONObject[" + quote(key) + "] is not a long.");
+            throw new JSONException("JSONObject[" + quote(key) + "] is not a long.", e);
         }
     }
 

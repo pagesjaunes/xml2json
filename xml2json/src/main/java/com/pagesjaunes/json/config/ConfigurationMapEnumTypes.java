@@ -26,12 +26,8 @@ public class ConfigurationMapEnumTypes{
 	public ConfigurationMapEnumTypes(String pFilename){
 		try {
 			this.loadProperties(pFilename);
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new RuntimeException(String.format("Failed to load [%s]", pFilename), e);
 		}
 	}
 	
