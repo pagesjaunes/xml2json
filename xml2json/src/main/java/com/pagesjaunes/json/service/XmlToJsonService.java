@@ -144,7 +144,7 @@ public class XmlToJsonService {
 					if (x.next() == '[') {
 						string = x.nextCDATA();
 						if (string.length() > 0) {
-							context.accumulate("content", string, false);
+							context.accumulate("$content", string, false);
 						}
 						return false;
 					}
@@ -213,7 +213,7 @@ public class XmlToJsonService {
 				// attribute = value
 
 				if (token instanceof String) {
-					string = (String) token;
+					string = "@" + token;
 					addQueue(queue, string);
 					token = x.nextToken();
 					if (token == EQ) {
@@ -258,10 +258,10 @@ public class XmlToJsonService {
 							return false;
 						} else if (token instanceof String) {
 							string = (String) token;
-							addQueue(queue, "content");
+							addQueue(queue, "$content");
 							if (string.length() > 0) {
 								jsonobject.accumulate(
-										"content",
+										"$content",
 										stringToValue(tagName, string,
 												queue.getLast()), false);
 							}
@@ -276,9 +276,9 @@ public class XmlToJsonService {
 									// flux JSON
 									// context.accumulate(tagName, "");
 								} else if (jsonobject.length() == 1
-										&& jsonobject.opt("content") != null) {
+										&& jsonobject.opt("$content") != null) {
 									context.accumulate(tagName,
-											jsonobject.opt("content"), isArray);
+											jsonobject.opt("$content"), isArray);
 								} else {
 									context.accumulate(tagName, jsonobject,
 											isArray);
