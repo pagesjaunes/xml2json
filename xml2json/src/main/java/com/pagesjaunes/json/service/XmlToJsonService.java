@@ -32,6 +32,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import com.pagesjaunes.json.JSONArray;
 import com.pagesjaunes.json.JSONException;
 import com.pagesjaunes.json.JSONObject;
 import com.pagesjaunes.json.XMLTokener;
@@ -41,13 +42,10 @@ import com.pagesjaunes.json.config.Types;
 /**
  * Use JSON.org class.
  * 
- * Convert a well-formed (but not necessarily valid) XML string into a
- * JSONObject. Some information may be lost in this transformation because JSON
- * is a data format and XML is a document format. XML uses elements, attributes,
- * and content text, while JSON uses unordered collections of name/value pairs
- * and arrays of values. JSON does not does not like to distinguish between
- * elements and attributes. Sequences of similar elements are represented as
- * JSONArrays. Content text may be placed in a "content" member. Comments,
+ * Converts a well-formed (but not necessarily valid) XML string into a
+ * {@link JSONObject}. Attributes names are prefixed with "@" in order to
+ * distinguish from elements. Content sections are identified by "$content".
+ * Sequences of elements are combined into {@link JSONArray}s. Comments,
  * prologs, DTDs, and <code>&lt;[ [ ]]></code> are ignored.
  * 
  * @param string
