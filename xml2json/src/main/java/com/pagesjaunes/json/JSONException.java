@@ -19,6 +19,14 @@ public class JSONException extends Exception {
         super(message);
     }
 
+    /**
+     * Constructs a JSONException with an explanatory message.
+     * @param message Detail about the reason for the exception.
+     */
+    public JSONException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
     public JSONException(Throwable cause) {
         super(cause.getMessage());
         this.cause = cause;
