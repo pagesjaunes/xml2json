@@ -5,7 +5,7 @@ xml2json is a Java library allowing to transform any XML string to a JSON format
 
 # License
 
-This project is released under version 2.0 of the [Apache License][]
+This project is released under [version 2.0 of the Apache License](https://www.apache.org/licenses/LICENSE-2.0.html)
 
 # Usage
 
@@ -58,3 +58,5 @@ public class MyConvertClass {
     }
 }
 ```
+
+
