@@ -220,35 +220,25 @@ public class XmlToJsonServiceTest {
 				"$.singleRootWithManyContentAndElements[0].$content[2]"));
 	}
 
+	/**
+	 * Verifies that XML namespace entries are preserved.
+	 */
 	@Test
-	public void dummyTest() throws Exception {
-		
+	public void testToJSONObject_Xmlns() throws Exception {
 		String xml =
-				"<root rootAttribute='rootAttributeValue'>\n"+
-						"<singleRootWithManyContentAndElements>\n"+
-							"contentBlock1\n"+
-							"<childElement>element1</childElement>\n"+
-							"contentBlock2\n"+
-							"<childElement>element2</childElement>\n"+
-							"contentBlock3\n"+
-						"</singleRootWithManyContentAndElements>\n"+
-					"</root>";
+				"<root "
+				+ "xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' "
+				+ "xsi:noNamespaceSchemaLocation='http://foo/bar.xsd'"
+				+ ">xxx</root>";
 		
 		XmlToJsonService xmlToJson = new XmlToJsonService();
-		xmlToJson.doExpandArrays(true);
 		JSONObject json = xmlToJson.toJSONObject(xml);
 		Object jsonIndex = Configuration.defaultConfiguration().
 				jsonProvider().parse(json.toString());
 
-		// Verify attribute rendered with "@" prefix
-		assertEquals("rootAttributeValue", JsonPath.read(jsonIndex,
-				"$.@rootAttribute"));
-		// Verify empty elements not included in output
-		try {
-			JsonPath.read(jsonIndex, "$.singleRootEmpty");
-			Assert.fail("Expected exception");
-		} catch (PathNotFoundException e) {
-			// Success
-		}
+		assertEquals("http://www.w3.org/2001/XMLSchema-instance", JsonPath.read(jsonIndex,
+				"$.@xmlns:xsi"));
+		assertEquals("http://foo/bar.xsd", JsonPath.read(jsonIndex,
+				"$.@xsi:noNamespaceSchemaLocation"));
 	}
 }
