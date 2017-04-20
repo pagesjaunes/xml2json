@@ -59,4 +59,16 @@ public class MyConvertClass {
 }
 ```
 
+# Change History
 
+1.0.1
+
+* Prefixed all attributes with "@" to prevent collisions with elements
+* Added XmlToJsonService.doExpandArrays() to support more consistent json output
+* Made json ordering consistent with XML (at least at first serialization)
+* Improved exception handling (released swalled exceptions)
+* Fixed incosistent unit test results
+
+1.0.0
+
+* Original release
