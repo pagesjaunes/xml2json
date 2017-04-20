@@ -225,7 +225,6 @@ public class XMLtoJSONTest {
                 + "<test_list1>test liste 1</test_list1>"
                 + "</test_liste>"
                 + "</bloc>";
-        // TODO [rkenney]: Is this really the ordering we want to happen? (flattened into an array)
         Assert.assertEquals("{"
                 + "\"blocid\":\"00413695C0009\","
                 + "\"test_liste\":{"
@@ -317,7 +316,6 @@ public class XMLtoJSONTest {
                 stXmlToJson.toJSONObject(xml).toString());
     }
 
-    // TODO [rkenney]: Test multiple content sections
     @Test
     public void convertXMLtoJSONContenuMixte() throws JSONException {
         String xml = "<bloc>"
