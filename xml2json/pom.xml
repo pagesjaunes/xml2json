@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.pagesjaunes</groupId>
 	<artifactId>xml2json</artifactId>
-	<version>1.0.1-MOESOL-1-SNAPSHOT</version>
+	<version>1.0.1-SNAPSHOT</version>
 	<name>xm2json</name>
 	<description>Convert XML to JSON</description>
 	<licenses>
