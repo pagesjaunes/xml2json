@@ -23,6 +23,7 @@ public class XmlToJsonServiceTest {
 			"<root rootAttribute='rootAttributeValue'>\n"+
 					"<singleRootEmpty/>\n"+
 					"<singleRootWithAttribute key='singleRootWithAttributeValue'/>\n"+
+					"<singleRootWithAttribute_WithClosingTag key='singleRootWithAttributeValue'></singleRootWithAttribute_WithClosingTag>\n"+
 					"<singleRootWithContent>singleRootWithContentValue</singleRootWithContent>\n"+
 					"<singleRootWithElement><childElement>singleRootWithElementValue</childElement></singleRootWithElement>\n"+
 					"<collisionRootEmpty/>\n"+
@@ -86,6 +87,9 @@ public class XmlToJsonServiceTest {
 		// Verify attribute rendered with "@" prefix
 		assertEquals("singleRootWithAttributeValue", JsonPath.read(jsonIndex,
 				"$.singleRootWithAttribute.@key"));
+		// Verify both self-closed and closing-tag forms of an element are treated the same
+		assertEquals("singleRootWithAttributeValue", JsonPath.read(jsonIndex,
+				"$.singleRootWithAttribute_WithClosingTag.@key"));
 		// Verify content of sole element is rendered as a simple string field (versus nested as a "context" field)
 		assertEquals("singleRootWithContentValue", JsonPath.read(jsonIndex,
 				"$.singleRootWithContent"));
@@ -171,7 +175,9 @@ public class XmlToJsonServiceTest {
 		}
 
 		assertEquals("singleRootWithAttributeValue", JsonPath.read(jsonIndex,
-				"$.singleRootWithAttribute.@key"));
+				"$.singleRootWithAttribute[0].@key"));
+		assertEquals("singleRootWithAttributeValue", JsonPath.read(jsonIndex,
+				"$.singleRootWithAttribute_WithClosingTag[0].@key"));
 		assertEquals("singleRootWithContentValue", JsonPath.read(jsonIndex,
 				"$.singleRootWithContent[0].$content[0]"));
 		assertEquals("singleRootWithElementValue", JsonPath.read(jsonIndex,

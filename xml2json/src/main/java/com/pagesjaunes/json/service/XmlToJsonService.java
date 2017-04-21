@@ -268,7 +268,7 @@ public class XmlToJsonService {
 						throw x.syntaxError("Misshaped tag");
 					}
 					if (jsonobject.length() > 0) {
-						context.accumulate(tagName, jsonobject, false);
+						context.accumulate(tagName, jsonobject, doExpandArrays);
 					} else {
 						// Empty blocks are not added to the JSON stream
 						// context.accumulate(tagName, "");
