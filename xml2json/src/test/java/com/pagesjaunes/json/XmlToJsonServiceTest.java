@@ -11,6 +11,7 @@ import org.junit.Test;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
+import com.jayway.jsonpath.spi.json.JsonProvider;
 import com.pagesjaunes.json.service.XmlToJsonService;
 
 
@@ -67,12 +68,13 @@ public class XmlToJsonServiceTest {
 					"</singleRootWithContentAtMultipleLevels>\n"+
 				"</root>";
 
+	/**
+	 * Tests various nested XML structures versus the default value of
+	 * {@link XmlToJsonService#doExpandArrays(boolean)}.
+	 */
 	@Test
-	public void testToJSONObject_DefaultConfig() throws Exception {
-		XmlToJsonService xmlToJson = new XmlToJsonService();
-		JSONObject json = xmlToJson.toJSONObject(variousStructuresXml);
-		Object jsonIndex = Configuration.defaultConfiguration().
-				jsonProvider().parse(json.toString());
+	public void testToJSONObject_NestedStructures_DefaultConfig() throws Exception {
+		Object jsonIndex = doParseToJsonIndex(variousStructuresXml, null);
 
 		// Verify attribute rendered with "@" prefix
 		assertEquals("rootAttributeValue", JsonPath.read(jsonIndex,
@@ -151,21 +153,17 @@ public class XmlToJsonServiceTest {
 	}
 
 	/**
-	 * Re-runs the same tests as {@link #testToJSONObject_DoExpandArrays()} with
+	 * Re-runs the same tests as {@link #testToJSONObject_NestedStructures_DefaultConfig()} with
 	 * {@link XmlToJsonService@#doExpandArrays(boolean)} enabled and then
-	 * verifies that all elements are expand to arrays.
+	 * verifies that all elements are expanded to arrays.
 	 */
 	@Test
-	public void testToJSONObject_DoExpandArrays() throws Exception {
-		XmlToJsonService xmlToJson = new XmlToJsonService();
-		xmlToJson.doExpandArrays(true);
-		JSONObject json = xmlToJson.toJSONObject(variousStructuresXml);
-		Object jsonIndex = Configuration.defaultConfiguration().
-				jsonProvider().parse(json.toString());
+	public void testToJSONObject_NestedStructures_DoExpandArrays() throws Exception {
+		Object jsonIndex = doParseToJsonIndex(variousStructuresXml, true);
 
 		// Verify attribute rendered with "@" prefix
 		assertEquals("rootAttributeValue", JsonPath.read(jsonIndex,
-				"$.@rootAttribute"));
+				"$.[0]@rootAttribute"));
 		// Verify empty elements not included in output
 		try {
 			JsonPath.read(jsonIndex, "$.singleRootEmpty");
@@ -175,55 +173,111 @@ public class XmlToJsonServiceTest {
 		}
 
 		assertEquals("singleRootWithAttributeValue", JsonPath.read(jsonIndex,
-				"$.singleRootWithAttribute[0].@key"));
+				"$.[0]singleRootWithAttribute[0].@key"));
 		assertEquals("singleRootWithAttributeValue", JsonPath.read(jsonIndex,
-				"$.singleRootWithAttribute_WithClosingTag[0].@key"));
+				"$.[0]singleRootWithAttribute_WithClosingTag[0].@key"));
 		assertEquals("singleRootWithContentValue", JsonPath.read(jsonIndex,
-				"$.singleRootWithContent[0].$content[0]"));
+				"$.[0]singleRootWithContent[0].$content[0]"));
 		assertEquals("singleRootWithElementValue", JsonPath.read(jsonIndex,
-				"$.singleRootWithElement[0].childElement[0].$content[0]"));
+				"$.[0]singleRootWithElement[0].childElement[0].$content[0]"));
 		try {
-			JsonPath.read(jsonIndex, "$.collisionRootEmpty");
+			JsonPath.read(jsonIndex, "$.[0]collisionRootEmpty");
 			Assert.fail("Expected exception");
 		} catch (PathNotFoundException e) {
 			// Success
 		}
 		assertEquals("collisionRootWithAttributeValue1", JsonPath.read(jsonIndex,
-				"$.collisionRootWithAttribute[0].@key"));
+				"$.[0]collisionRootWithAttribute[0].@key"));
 		assertEquals("collisionRootWithAttributeValue2", JsonPath.read(jsonIndex,
-				"$.collisionRootWithAttribute[1].@key"));
+				"$.[0]collisionRootWithAttribute[1].@key"));
 		assertEquals("collisionRootWithContentValue1", JsonPath.read(jsonIndex,
-				"$.collisionRootWithContent[0].$content[0]"));
+				"$.[0]collisionRootWithContent[0].$content[0]"));
 		assertEquals("collisionRootWithContentValue2", JsonPath.read(jsonIndex,
-				"$.collisionRootWithContent[1].$content[0]"));
+				"$.[0]collisionRootWithContent[1].$content[0]"));
 		assertEquals("collisionRootWithElementValue1", JsonPath.read(jsonIndex,
-				"$.collisionRootWithElement[0].childElement[0].$content[0]"));
+				"$.[0]collisionRootWithElement[0].childElement[0].$content[0]"));
 		assertEquals("collisionRootWithElementValue2", JsonPath.read(jsonIndex,
-				"$.collisionRootWithElement[1].childElement[0].$content[0]"));
+				"$.[0]collisionRootWithElement[1].childElement[0].$content[0]"));
 		assertEquals("singleRootWithChildCollisionValue1", JsonPath.read(jsonIndex,
-				"$.singleRootWithChildCollision[0].childElement[0].$content[0]"));
+				"$.[0]singleRootWithChildCollision[0].childElement[0].$content[0]"));
 		assertEquals("singleRootWithChildCollisionValue2", JsonPath.read(jsonIndex,
-				"$.singleRootWithChildCollision[0].childElement[1].$content[0]"));
+				"$.[0]singleRootWithChildCollision[0].childElement[1].$content[0]"));
 		assertEquals("attributeValue", JsonPath.read(jsonIndex,
-				"$.singleRootWithAttibuteElementCollision[0].@collisionKey"));
+				"$.[0]singleRootWithAttibuteElementCollision[0].@collisionKey"));
 		assertEquals("elementValue", JsonPath.read(jsonIndex,
-				"$.singleRootWithAttibuteElementCollision[0].collisionKey[0].$content[0]"));
+				"$.[0]singleRootWithAttibuteElementCollision[0].collisionKey[0].$content[0]"));
 		assertEquals("element1", JsonPath.read(jsonIndex,
-				"$.singleRootWithOneContentAndElements[0].childElement[0].$content[0]"));
+				"$.[0]singleRootWithOneContentAndElements[0].childElement[0].$content[0]"));
 		assertEquals("element2", JsonPath.read(jsonIndex,
-				"$.singleRootWithOneContentAndElements[0].childElement[1].$content[0]"));
+				"$.[0]singleRootWithOneContentAndElements[0].childElement[1].$content[0]"));
 		assertEquals("contentBlock", JsonPath.read(jsonIndex,
-				"$.singleRootWithOneContentAndElements[0].$content[0]"));
+				"$.[0]singleRootWithOneContentAndElements[0].$content[0]"));
 		assertEquals("contentBlock1", JsonPath.read(jsonIndex,
-				"$.singleRootWithManyContentAndElements[0].$content[0]"));
+				"$.[0]singleRootWithManyContentAndElements[0].$content[0]"));
 		assertEquals("element1", JsonPath.read(jsonIndex,
-				"$.singleRootWithManyContentAndElements[0].childElement[0].$content[0]"));
+				"$.[0]singleRootWithManyContentAndElements[0].childElement[0].$content[0]"));
 		assertEquals("contentBlock2", JsonPath.read(jsonIndex,
-				"$.singleRootWithManyContentAndElements[0].$content[1]"));
+				"$.[0]singleRootWithManyContentAndElements[0].$content[1]"));
 		assertEquals("element2", JsonPath.read(jsonIndex,
-				"$.singleRootWithManyContentAndElements[0].childElement[1].$content[0]"));
+				"$.[0]singleRootWithManyContentAndElements[0].childElement[1].$content[0]"));
 		assertEquals("contentBlock3", JsonPath.read(jsonIndex,
-				"$.singleRootWithManyContentAndElements[0].$content[2]"));
+				"$.[0]singleRootWithManyContentAndElements[0].$content[2]"));
+	}
+
+	/**
+	 * Tests various XML structures at the root of the XML versus the default value of
+	 * {@link XmlToJsonService#doExpandArrays(boolean)}.
+	 */
+	@Test
+	public void testToJSONObject_RootStructures_DefaultConfig() throws Exception {
+		String xml = "<root attr='attrValue'/>";
+		Object jsonIndex = doParseToJsonIndex(xml, null);
+		assertEquals("attrValue", JsonPath.read(jsonIndex,
+				"$.@attr"));
+
+		xml = "<root attr='attrValue'></root>";
+		jsonIndex = doParseToJsonIndex(xml, null);
+		assertEquals("attrValue", JsonPath.read(jsonIndex,
+				"$.@attr"));
+
+		xml = "<root><child attr='attrValue'/></root>";
+		jsonIndex = doParseToJsonIndex(xml, null);
+		assertEquals("attrValue", JsonPath.read(jsonIndex,
+				"$.child.@attr"));
+
+		xml = "<root><child attr='attrValue'></child></root>";
+		jsonIndex = doParseToJsonIndex(xml, null);
+		assertEquals("attrValue", JsonPath.read(jsonIndex,
+				"$.child.@attr"));
+	}
+
+	/**
+	 * Re-runs the same tests as
+	 * {@link #testToJSONObject_RootStructures_DefaultConfig()} with
+	 * {@link XmlToJsonService@#doExpandArrays(boolean)} enabled and then
+	 * verifies that all elements are expanded to arrays.
+	 */
+	@Test
+	public void testToJSONObject_RootStructures_DoExpandArrays() throws Exception {
+		String xml = "<root attr='attrValue'/>";
+		Object jsonIndex = doParseToJsonIndex(xml, true);
+		assertEquals("attrValue", JsonPath.read(jsonIndex,
+				"$.[0]@attr"));
+
+		xml = "<root attr='attrValue'></root>";
+		jsonIndex = doParseToJsonIndex(xml, true);
+		assertEquals("attrValue", JsonPath.read(jsonIndex,
+				"$.[0]@attr"));
+
+		xml = "<root><child attr='attrValue'/></root>";
+		jsonIndex = doParseToJsonIndex(xml, true);
+		assertEquals("attrValue", JsonPath.read(jsonIndex,
+				"$.[0]child.[0]@attr"));
+
+		xml = "<root><child attr='attrValue'></child></root>";
+		jsonIndex = doParseToJsonIndex(xml, true);
+		assertEquals("attrValue", JsonPath.read(jsonIndex,
+				"$.[0]child.[0]@attr"));
 	}
 
 	/**
@@ -236,15 +290,27 @@ public class XmlToJsonServiceTest {
 				+ "xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' "
 				+ "xsi:noNamespaceSchemaLocation='http://foo/bar.xsd'"
 				+ ">xxx</root>";
-		
-		XmlToJsonService xmlToJson = new XmlToJsonService();
-		JSONObject json = xmlToJson.toJSONObject(xml);
-		Object jsonIndex = Configuration.defaultConfiguration().
-				jsonProvider().parse(json.toString());
+		Object jsonIndex = doParseToJsonIndex(xml, false);
 
 		assertEquals("http://www.w3.org/2001/XMLSchema-instance", JsonPath.read(jsonIndex,
 				"$.@xmlns:xsi"));
 		assertEquals("http://foo/bar.xsd", JsonPath.read(jsonIndex,
 				"$.@xsi:noNamespaceSchemaLocation"));
+	}
+
+	/**
+	 * Calls {@link XmlToJsonService#toJSONObject(String)} on the provided XML,
+	 * and then parses the resulting json string with
+	 * {@link JsonProvider#parse(String)} in order to return a object that can
+	 * be navigated by {@link JsonPath#read(String)}.
+	 */
+	private static Object doParseToJsonIndex(String xml, Boolean doExpandArrays) throws JSONException {
+		XmlToJsonService xmlToJson = new XmlToJsonService();
+		if (doExpandArrays != null) {
+			xmlToJson.doExpandArrays(doExpandArrays);
+		}
+		JSONObject json = xmlToJson.toJSONObject(xml);
+		// Parse for jsonpath
+		return Configuration.defaultConfiguration().jsonProvider().parse(json.toString());
 	}
 }

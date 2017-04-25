@@ -229,8 +229,8 @@ public class XmlToJsonService {
 				LOG.debug("Queue = " + queue.getLast() + ", " + jsonConf);
 			}
 			boolean isArray =
-					// Global flag to expand everythin gthat can be an array to an array--skipping the root element.
-					(doExpandArrays & queue.size() > 1) ||
+					// Global flag to expand everything that can be an array to an array
+					doExpandArrays ||
 					// Otherwise read the field-specific "array" flags from the configuration.
 					(jsonConf != null ? jsonConf.getTypes().equals(Types.ARRAY) : false);
 
