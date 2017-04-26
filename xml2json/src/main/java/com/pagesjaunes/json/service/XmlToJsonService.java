@@ -28,7 +28,9 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
@@ -36,6 +38,7 @@ import com.pagesjaunes.json.JSONArray;
 import com.pagesjaunes.json.JSONException;
 import com.pagesjaunes.json.JSONObject;
 import com.pagesjaunes.json.XMLTokener;
+import com.pagesjaunes.json.config.ConfigurationMapEnumTypes;
 import com.pagesjaunes.json.config.JsonConf;
 import com.pagesjaunes.json.config.Types;
 
@@ -87,11 +90,36 @@ public class XmlToJsonService {
 
 	protected Map<String, JsonConf> configurationMap;
 
+	/** See {@link #doExpandArrays(boolean)} */
+	private boolean doExpandArrays = false;
+
+	public XmlToJsonService() {
+		this(new HashMap<String,JsonConf>());
+	}
+
 	/**
 	 * @param pConfigurationMap
+	 *            A map of json paths associated to desired types. See
+	 *            {@link ConfigurationMapEnumTypes} for construction of this map
+	 *            from a {@link Properties} object (file).
 	 */
 	public XmlToJsonService(Map<String, JsonConf> pConfigurationMap) {
 		configurationMap = pConfigurationMap;
+	}
+
+	/**
+	 * If set to <code>true</code>, all items that may be rendered as an array
+	 * (child elements, content sections, etc) will be rendered as an array,
+	 * even if they only contain one item, and all content sections will be
+	 * rendered in "$content" fields, regardless of whether parallel elements
+	 * (e.g. multiple content sections) exist. This results in a more consistent
+	 * structure, but is more verbose. Defaults to <code>false</code>.
+	 * 
+	 * @return "this" object.
+	 */
+	public XmlToJsonService doExpandArrays(boolean doExpand) {
+		this.doExpandArrays = doExpand;
+		return this;
 	}
 
 	/**
@@ -200,8 +228,11 @@ public class XmlToJsonService {
 			if (LOG.isDebugEnabled() && null != jsonConf) {
 				LOG.debug("Queue = " + queue.getLast() + ", " + jsonConf);
 			}
-			boolean isArray = (jsonConf != null ? jsonConf.getTypes().equals(
-					Types.ARRAY) : false);
+			boolean isArray =
+					// Global flag to expand everything that can be an array to an array
+					doExpandArrays ||
+					// Otherwise read the field-specific "array" flags from the configuration.
+					(jsonConf != null ? jsonConf.getTypes().equals(Types.ARRAY) : false);
 
 			for (;;) {
 				if (token == null) {
@@ -237,9 +268,9 @@ public class XmlToJsonService {
 						throw x.syntaxError("Misshaped tag");
 					}
 					if (jsonobject.length() > 0) {
-						context.accumulate(tagName, jsonobject, false);
+						context.accumulate(tagName, jsonobject, doExpandArrays);
 					} else {
-						// Les blocs vides ne sont pas ajoutés au flux JSON
+						// Empty blocks are not added to the JSON stream
 						// context.accumulate(tagName, "");
 					}
 					return false;
@@ -261,7 +292,7 @@ public class XmlToJsonService {
 								jsonobject.accumulate(
 										"$content",
 										stringToValue(tagName, string,
-												queue.getLast()), false);
+												queue.getLast()), doExpandArrays /* The first content entry is expanded to array only if the global flag is set. */);
 							}
 							queue.removeLast();
 
@@ -270,10 +301,10 @@ public class XmlToJsonService {
 						} else if (token == LT) {
 							if (parse(x, jsonobject, tagName, queue)) {
 								if (jsonobject.length() == 0) {
-									// Les blocs vides ne sont pas ajoutés au
-									// flux JSON
+									// Empty blocks are not added to the JSON stream
 									// context.accumulate(tagName, "");
-								} else if (jsonobject.length() == 1
+								} else if (!doExpandArrays
+										&& jsonobject.length() == 1
 										&& jsonobject.opt("$content") != null) {
 									context.accumulate(tagName,
 											jsonobject.opt("$content"), isArray);
@@ -374,5 +405,4 @@ public class XmlToJsonService {
 		}
 		return jo;
 	}
-
 }
